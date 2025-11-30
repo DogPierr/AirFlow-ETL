@@ -1,0 +1,10 @@
+apache-airflow
+sqlalchemy
+psycopg2-binary
+pandas
+matplotlib
+seaborn
+requests
+python-dotenv
+beautifulsoup4
+lxml

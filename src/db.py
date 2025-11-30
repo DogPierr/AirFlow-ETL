@@ -1,0 +1,73 @@
+"""
+Модуль для работы с базой данных
+"""
+
+import os
+from datetime import datetime
+from sqlalchemy import create_engine, Column, Integer, Float, String, DateTime, Text
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+
+# Создаем URL для подключения к PostgreSQL
+DATABASE_URL = f"postgresql://{os.getenv('POSTGRES_USER', 'airflow')}:{os.getenv('POSTGRES_PASSWORD', 'airflow')}@{os.getenv('POSTGRES_HOST', 'postgres')}:{os.getenv('POSTGRES_PORT', '5432')}/{os.getenv('POSTGRES_DB', 'airflow')}"
+
+# Создаем движок базы данных
+engine = create_engine(DATABASE_URL, echo=False)
+
+# Создаем фабрику сессий
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+# Создаем базовый класс для моделей
+Base = declarative_base()
+
+class Metric(Base):
+    """
+    Модель для хранения метрик из разных источников данных
+    """
+    __tablename__ = "metrics"
+
+    id = Column(Integer, primary_key=True, index=True)
+    collected_at = Column(DateTime, default=datetime.utcnow, index=True)
+    source = Column(String, index=True)
+
+    # Новостные метрики
+    news_num_articles = Column(Integer, nullable=True)
+    news_avg_title_len = Column(Float, nullable=True)
+    news_sentiment = Column(Float, nullable=True)
+
+    # Погодные метрики
+    weather_temp_c = Column(Float, nullable=True)
+    weather_humidity = Column(Float, nullable=True)
+    weather_pressure = Column(Float, nullable=True)
+
+    # Криптовалютные метрики
+    crypto_price_usd = Column(Float, nullable=True)
+    crypto_volume_24h = Column(Float, nullable=True)
+    crypto_change_pct_24h = Column(Float, nullable=True)
+
+    # Кастомные метрики
+    custom_metric = Column(Float, nullable=True)
+
+    # Технические метрики
+    response_time_ms = Column(Integer, nullable=True)
+    errors_count = Column(Integer, nullable=True)
+
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+def init_db():
+    """
+    Инициализация базы данных - создание всех таблиц
+    """
+    try:
+        Base.metadata.create_all(bind=engine)
+        print("База данных успешно инициализирована")
+        return True
+    except Exception as e:
+        print(f"Ошибка при инициализации базы данных: {e}")
+        return False
+
+def close_db():
+    """
+    Закрытие соединения с базой данных
+    """
+    engine.dispose()
