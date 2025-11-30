@@ -8,10 +8,8 @@ from airflow.operators.python import PythonOperator
 from airflow.operators.bash import BashOperator
 from airflow.utils.dates import days_ago
 
-# Импортируем функции анализа
 from src.analysis.errors_analysis import run_performance_analysis, check_pipeline_stop_condition
 
-# Настройки по умолчанию для DAG
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
@@ -22,12 +20,11 @@ default_args = {
     'retry_delay': timedelta(minutes=5),
 }
 
-# Создаем DAG
 with DAG(
     'performance_analysis',
     default_args=default_args,
     description='Анализ производительности сервисов каждые 2 часа',
-    schedule_interval='0 */2 * * *',  # Каждые 2 часа
+    schedule_interval='0 */2 * * *',
     catchup=False,
     tags=['analysis', 'performance', 'bi_hourly'],
 ) as dag:

@@ -21,43 +21,32 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 class Metric(Base):
-    """
-    Модель для хранения метрик из разных источников данных
-    """
     __tablename__ = "metrics"
 
     id = Column(Integer, primary_key=True, index=True)
     collected_at = Column(DateTime, default=datetime.utcnow, index=True)
     source = Column(String, index=True)
 
-    # Новостные метрики
     news_num_articles = Column(Integer, nullable=True)
     news_avg_title_len = Column(Float, nullable=True)
     news_sentiment = Column(Float, nullable=True)
 
-    # Погодные метрики
     weather_temp_c = Column(Float, nullable=True)
     weather_humidity = Column(Float, nullable=True)
     weather_pressure = Column(Float, nullable=True)
 
-    # Криптовалютные метрики
     crypto_price_usd = Column(Float, nullable=True)
     crypto_volume_24h = Column(Float, nullable=True)
     crypto_change_pct_24h = Column(Float, nullable=True)
 
-    # Кастомные метрики
     custom_metric = Column(Float, nullable=True)
 
-    # Технические метрики
     response_time_ms = Column(Integer, nullable=True)
     errors_count = Column(Integer, nullable=True)
 
     created_at = Column(DateTime, default=datetime.utcnow)
 
 def init_db():
-    """
-    Инициализация базы данных - создание всех таблиц
-    """
     try:
         Base.metadata.create_all(bind=engine)
         print("База данных успешно инициализирована")
@@ -67,7 +56,4 @@ def init_db():
         return False
 
 def close_db():
-    """
-    Закрытие соединения с базой данных
-    """
     engine.dispose()
