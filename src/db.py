@@ -8,16 +8,12 @@ from sqlalchemy import create_engine, Column, Integer, Float, String, DateTime, 
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-# Создаем URL для подключения к PostgreSQL
 DATABASE_URL = f"postgresql://{os.getenv('POSTGRES_USER', 'airflow')}:{os.getenv('POSTGRES_PASSWORD', 'airflow')}@{os.getenv('POSTGRES_HOST', 'postgres')}:{os.getenv('POSTGRES_PORT', '5432')}/{os.getenv('POSTGRES_DB', 'airflow')}"
 
-# Создаем движок базы данных
 engine = create_engine(DATABASE_URL, echo=False)
 
-# Создаем фабрику сессий
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Создаем базовый класс для моделей
 Base = declarative_base()
 
 class Metric(Base):
